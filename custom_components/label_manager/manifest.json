@@ -1,0 +1,17 @@
+{
+  "domain": "label_manager",
+  "name": "Label Manager",
+  "version": "0.0.1",
+  "documentation": "https://github.com/ekkehard-lutz/label-manager",
+  "issue_tracker": "https://github.com/ekkehard-lutz/label-manager/issues",
+  "codeowners": [
+    "@ekkehard-lutz"
+  ],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "requirements": [],
+  "dependencies": [],
+  "after_dependencies": [],
+  "loggers": []
+}
