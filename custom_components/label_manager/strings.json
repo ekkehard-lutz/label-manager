@@ -1,0 +1,10 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Label Manager",
+                "description": "Configure the Label Manager integration."
+            }
+        }
+    }
+}
