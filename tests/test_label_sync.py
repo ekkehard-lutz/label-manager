@@ -166,10 +166,7 @@ def test_device_listener_syncs_on_label_change() -> None:
     hass = MagicMock()
     storage = MagicMock()
 
-    with patch(
-        "custom_components.label_manager.label_sync."
-        "async_track_device_registry_updated_event"
-    ) as register_listener:
+    with patch.object(hass.bus, "async_listen") as register_listener:
         from custom_components.label_manager.label_sync import (
             async_setup_device_listener,
         )
@@ -219,10 +216,7 @@ def test_device_listener_ignores_non_label_change() -> None:
     hass = MagicMock()
     storage = MagicMock()
 
-    with patch(
-        "custom_components.label_manager.label_sync."
-        "async_track_device_registry_updated_event"
-    ) as register_listener:
+    with patch.object(hass.bus, "async_listen") as register_listener:
         from custom_components.label_manager.label_sync import (
             async_setup_device_listener,
         )
@@ -285,4 +279,3 @@ def test_device_label_replacement_is_applied() -> None:
     assert result.labels_to_remove == {
         "Beleuchtung",
     }
-    

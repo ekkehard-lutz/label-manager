@@ -11,6 +11,7 @@ from homeassistant.helpers.event import (
     async_track_device_registry_updated_event,
 )
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
 
 from .services import get_device_entities, get_device_labels
 from .storage import LabelManagerStorage
@@ -163,7 +164,7 @@ async def async_setup_device_listener(
             device_id,
         )
 
-    return async_track_device_registry_updated_event(
-        hass,
+    return hass.bus.async_listen(
+        EVENT_DEVICE_REGISTRY_UPDATED,
         _device_registry_updated,
     )
