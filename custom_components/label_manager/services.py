@@ -1,0 +1,38 @@
+"""Home Assistant services for the Label Manager integration."""
+
+from __future__ import annotations
+
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+
+
+def get_device_entities(
+    hass: HomeAssistant,
+    device_id: str,
+) -> set[str]:
+    """Return all entity IDs belonging to a device."""
+    entity_registry = er.async_get(hass)
+
+    return {
+        entity.entity_id
+        for entity in entity_registry.async_entries_for_device(
+            device_id,
+            include_disabled_entities=True,
+        )
+    }
+
+
+def get_device_labels(
+    hass: HomeAssistant,
+    device_id: str,
+) -> set[str]:
+    """Return all labels currently assigned to a device."""
+    device_registry = dr.async_get(hass)
+
+    device = device_registry.async_get(device_id)
+
+    if device is None:
+        return set()
+
+    return set(device.labels)
