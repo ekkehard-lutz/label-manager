@@ -10,7 +10,7 @@ from homeassistant.data_entry_flow import FlowResult
 from .const import DOMAIN
 
 
-class LabelManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a Label Manager config flow."""
 
     VERSION = 1
