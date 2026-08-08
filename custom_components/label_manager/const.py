@@ -11,8 +11,6 @@ VERSION = "0.0.1"
 STORAGE_VERSION = 1
 STORAGE_KEY = DOMAIN
 
-PLATFORMS = [
-    "sensor",
-]
+PLATFORMS: list[str] = []
 
 SYNC_INTERVAL = timedelta(days=1)
