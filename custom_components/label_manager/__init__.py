@@ -14,8 +14,10 @@ async def async_setup(
     hass: HomeAssistant,
     config: dict,
 ) -> bool:
-    """Set up the Label Manager component."""
+    """Set up the Label Manager integration."""
+
     hass.data.setdefault(DOMAIN, {})
+
     return True
 
 
@@ -24,7 +26,9 @@ async def async_setup_entry(
     entry: LabelManagerConfigEntry,
 ) -> bool:
     """Set up Label Manager from a config entry."""
+
     hass.data.setdefault(DOMAIN, {})
+
     return True
 
 
@@ -33,5 +37,5 @@ async def async_unload_entry(
     entry: LabelManagerConfigEntry,
 ) -> bool:
     """Unload a config entry."""
+
     return True
-    

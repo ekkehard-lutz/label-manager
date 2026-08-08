@@ -1,0 +1,13 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Label Manager",
+                "description": "Set up the Label Manager integration."
+            }
+        },
+        "abort": {
+            "already_configured": "The Label Manager is already configured."
+        }
+    }
+}
