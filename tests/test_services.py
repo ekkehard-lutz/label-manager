@@ -11,11 +11,24 @@ def test_get_device_entities(monkeypatch) -> None:
 
     entity_registry = MagicMock()
 
-    entity_registry.async_entries_for_device.return_value = [
-        MagicMock(entity_id="light.test_light"),
-        MagicMock(entity_id="sensor.test_power"),
-        MagicMock(entity_id="sensor.test_energy"),
-    ]
+    entity_registry.entities = {
+        "light.test_light": MagicMock(
+            entity_id="light.test_light",
+            device_id="device_123",
+        ),
+        "sensor.test_power": MagicMock(
+            entity_id="sensor.test_power",
+            device_id="device_123",
+        ),
+        "sensor.test_energy": MagicMock(
+            entity_id="sensor.test_energy",
+            device_id="device_123",
+        ),
+        "sensor.other": MagicMock(
+            entity_id="sensor.other",
+            device_id="other_device",
+        ),
+    }
 
     from custom_components.label_manager import services
 
@@ -32,10 +45,5 @@ def test_get_device_entities(monkeypatch) -> None:
         "sensor.test_power",
         "sensor.test_energy",
     }
-
-    entity_registry.async_entries_for_device.assert_called_once_with(
-        "device_123",
-        include_disabled_entities=True,
-    )
 
 

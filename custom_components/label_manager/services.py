@@ -12,14 +12,13 @@ def get_device_entities(
     device_id: str,
 ) -> set[str]:
     """Return all entity IDs belonging to a device."""
+
     entity_registry = er.async_get(hass)
 
     return {
         entity.entity_id
-        for entity in entity_registry.async_entries_for_device(
-            device_id,
-            include_disabled_entities=True,
-        )
+        for entity in entity_registry.entities.values()
+        if entity.device_id == device_id
     }
 
 
