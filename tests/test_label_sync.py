@@ -2,8 +2,12 @@
 
 import asyncio
 import pytest
-from custom_components.label_manager.label_sync import calculate_entity_labels
 from unittest.mock import AsyncMock, MagicMock, patch
+
+from homeassistant.core import Event
+from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
+
+from custom_components.label_manager.label_sync import calculate_entity_labels
 
 
 def test_new_device_label_is_inherited() -> None:
@@ -188,16 +192,19 @@ def test_device_listener_syncs_on_label_change() -> None:
         ) as sync_device_mock:
             asyncio.run(
                 callback(
-                    {
-                        "device_id": "device_123",
-                        "action": "update",
-                        "changes": {
-                            "labels": {
-                                "old": [],
-                                "new": ["Beleuchtung"],
-                            }
+                    Event(
+                        EVENT_DEVICE_REGISTRY_UPDATED,
+                        {
+                            "device_id": "device_123",
+                            "action": "update",
+                            "changes": {
+                                "labels": {
+                                    "old": [],
+                                    "new": ["Beleuchtung"],
+                                }
+                            },
                         },
-                    }
+                    )
                 )
             )
 
@@ -238,16 +245,19 @@ def test_device_listener_ignores_non_label_change() -> None:
         ) as sync_device_mock:
             asyncio.run(
                 callback(
-                    {
-                        "device_id": "device_123",
-                        "action": "update",
-                        "changes": {
-                            "name": {
-                                "old": "Shelly",
-                                "new": "Shelly Dimmer",
-                            }
+                    Event(
+                        EVENT_DEVICE_REGISTRY_UPDATED,
+                        {
+                            "device_id": "device_123",
+                            "action": "update",
+                            "changes": {
+                                "name": {
+                                    "old": "Shelly",
+                                    "new": "Shelly Dimmer",
+                                }
+                            },
                         },
-                    }
+                    )
                 )
             )
 
