@@ -2,14 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
-from collections.abc import Callable
-
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.event import (
-    async_track_device_registry_updated_event,
-)
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
 
@@ -54,10 +50,7 @@ def calculate_entity_labels(
     # labels.
     new_inherited_labels = set(device_labels)
 
-    new_entity_labels = (
-        entity_labels
-        - labels_to_remove
-    ) | labels_to_add
+    new_entity_labels = (entity_labels - labels_to_remove) | labels_to_add
 
     return LabelSyncResult(
         entity_labels=new_entity_labels,
@@ -100,8 +93,7 @@ async def sync_entity(
     )
 
     new_labels = (
-        current_entity_labels
-        | result.labels_to_add
+        current_entity_labels | result.labels_to_add
     ) - result.labels_to_remove
 
     if new_labels != current_entity_labels:
@@ -148,8 +140,10 @@ async def async_setup_device_listener(
 ) -> Callable[[], None]:
     """Listen for device registry changes."""
 
-    async def _device_registry_updated(event_data) -> None:
+    async def _device_registry_updated(event) -> None:
         """Handle a device registry update."""
+
+        event_data = event.data
 
         changes = event_data.get("changes", {})
 
