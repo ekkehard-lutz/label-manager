@@ -5,12 +5,12 @@ inheriting device labels to the entities belonging to a device.
 
 ## Status
 
-**Version: 0.1.0**
+**Version: 0.1.1**
 
-The project is currently under active development.
+The first stable release of the Label Manager.
 
-The first implementation of automatic device-to-entity label inheritance
-is working and covered by automated tests.
+Device-to-entity label inheritance, manual synchronization, and automatic
+daily synchronization are implemented and covered by automated tests.
 
 ## Features
 
@@ -46,6 +46,28 @@ When a label is added to a device, it is added to the device's entities.
 
 When a label is removed from a device, the corresponding inherited label is
 removed from the entities.
+
+### Daily consistency synchronization
+
+The integration can automatically synchronize all registered devices once
+per day.
+
+The synchronization time can be configured through the integration options.
+The interval is fixed to once per day.
+
+Automatic synchronization can be enabled or disabled independently of the
+manual synchronization.
+
+Changing the synchronization settings takes effect without requiring a
+Home Assistant restart.
+
+### Manual synchronization
+
+A manual synchronization of all registered devices can be triggered at any
+time using the integration's synchronization button.
+
+Manual synchronization is independent of the automatic daily synchronization
+and is useful for testing or for immediately applying label changes.
 
 ### Multiple labels
 
@@ -104,30 +126,67 @@ entity and the labels that are managed through device inheritance.
 
 ## Installation
 
-The integration is currently developed as a Home Assistant custom
-integration.
+### HACS
 
-The repository contains the integration in:
+The Label Manager can be installed through HACS.
+
+If the repository is not yet available in your HACS instance, add the GitHub
+repository as a custom repository:
+
+```text
+https://github.com/ekkehard-lutz/label-manager
+```
+
+Select **Integration** as the repository category and install **Label Manager**.
+
+After installation, restart Home Assistant if requested by HACS.
+
+Then add **Label Manager** through:
+
+```text
+Settings → Devices & services → Add integration
+```
+
+### Manual installation
+
+The integration files are located in:
 
 ```text
 custom_components/label_manager/
 ```
 
-For development, the repository can be cloned separately:
-
-```bash
-cd /config
-git clone https://github.com/ekkehard-lutz/label-manager.git label-manager-git
-```
-
-The integration files can then be copied to the active Home Assistant
-configuration:
+For a manual installation, copy that directory to:
 
 ```text
 /config/custom_components/label_manager/
 ```
 
-> Installation and HACS support are currently being further developed.
+Then restart Home Assistant and add **Label Manager** through the integrations
+page.
+
+## Configuration
+
+After adding the integration, open its configuration/options dialog.
+
+The following options are available:
+
+### Automatic daily synchronization
+
+Enable or disable the automatic daily synchronization.
+
+The default is **enabled**.
+
+### Synchronization time
+
+Select the time at which the daily synchronization is performed.
+
+The interval is fixed to **once per day**.
+
+Changing the time or enabling/disabling automatic synchronization does not
+require a Home Assistant restart.
+
+The manual synchronization button remains available regardless of the
+automatic synchronization setting.
 
 ## Development
 
@@ -155,11 +214,18 @@ The current test suite contains tests for:
 - manual modification of inherited labels
 - device registry event handling
 - device entity lookup
+- complete device synchronization
+- manual synchronization
+- daily synchronization scheduler
+- configurable synchronization time
+- enabling and disabling automatic synchronization
+- options update handling
+- options flow validation
 
 Current status:
 
 ```text
-15 passed
+27 passed
 ```
 
 ## Project structure
@@ -168,7 +234,10 @@ Current status:
 label-manager/
 ├── custom_components/
 │   └── label_manager/
+│       ├── brand/
+│       ├── translations/
 │       ├── __init__.py
+│       ├── button.py
 │       ├── config_flow.py
 │       ├── const.py
 │       ├── coordinator.py
@@ -181,13 +250,18 @@ label-manager/
 │       ├── services.py
 │       ├── statistics.py
 │       ├── storage.py
-│       ├── strings.json
-│       └── translations/
+│       └── strings.json
 ├── tests/
+│   ├── test_init.py
 │   ├── test_label_sync.py
+│   ├── test_scheduler.py
 │   └── test_services.py
+├── .gitignore
+├── LICENSE
 ├── README.md
-└── LICENSE
+├── hacs.json
+├── pyproject.toml
+└── requirements-dev.txt
 ```
 
 ## Roadmap
@@ -206,8 +280,10 @@ label-manager/
 - Automatically synchronize label changes
 - Remove inherited labels when they are removed from the device
 - Distinguish inherited labels from entity-only labels
-- **Planned:** Periodic consistency synchronization (e.g. once per day/night)
-  to recover from missed events or inconsistent states
+- Manual full synchronization
+- Configurable daily consistency synchronization
+- Enable or disable automatic synchronization
+- Configurable synchronization time
 
 ### 0.2.x – Group Sensors
 
@@ -225,12 +301,11 @@ label-manager/
 - History of synchronization activities
 - Improved visibility into label inheritance
 
-### 1.0.0 – First Stable Release
+### 1.0.0 – Extended Stable Release
 
-- First stable release
-- Complete documentation
-- Stable configuration and synchronization behaviour
-- Comprehensive automated test coverage
+- Extended documentation
+- Further features based on practical usage
+- Stable long-term configuration and synchronization behaviour
 
 ## License
 
