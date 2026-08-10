@@ -11,7 +11,13 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
-from .const import CONF_SYNC_TIME, DEFAULT_SYNC_TIME, DOMAIN
+from .const import (
+    CONF_AUTO_SYNC,
+    CONF_SYNC_TIME,
+    DEFAULT_AUTO_SYNC,
+    DEFAULT_SYNC_TIME,
+    DOMAIN
+)
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -57,6 +63,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(data=user_input)
 
+        current_auto_sync = self.config_entry.options.get(
+            CONF_AUTO_SYNC,
+            DEFAULT_AUTO_SYNC,
+        )
+
         current_sync_time = self.config_entry.options.get(
             CONF_SYNC_TIME,
             DEFAULT_SYNC_TIME,
@@ -66,6 +77,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema(
                 {
+                    vol.Required(
+                        CONF_AUTO_SYNC,
+                        default=current_auto_sync,
+                    ): selector.BooleanSelector(),
+
                     vol.Required(
                         CONF_SYNC_TIME,
                         default=current_sync_time,

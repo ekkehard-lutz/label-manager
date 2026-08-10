@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
+from homeassistant.helpers.event import async_track_time_change
 
 from .services import get_device_entities, get_device_ids, get_device_labels
 from .storage import LabelManagerStorage
@@ -151,6 +152,32 @@ async def sync_all_devices(
     await storage.async_save()
 
     return results
+
+
+def async_setup_daily_sync(
+    hass: HomeAssistant,
+    storage: LabelManagerStorage,
+    sync_time: str,
+) -> Callable[[], None]:
+    """Set up the daily label synchronization."""
+
+    hour, minute, second = map(int, sync_time.split(":"))
+
+    async def _daily_sync(now) -> None:
+        """Run the daily label synchronization."""
+
+        await sync_all_devices(
+            hass,
+            storage,
+        )
+
+    return async_track_time_change(
+        hass,
+        _daily_sync,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
 
 async def async_setup_device_listener(

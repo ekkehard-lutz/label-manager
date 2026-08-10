@@ -16,9 +16,11 @@
                 "title": "Label Manager settings",
                 "description": "Configure the daily label synchronization.",
                 "data": {
+                    "auto_sync": "Automatic daily synchronization",
                     "sync_time": "Synchronization time"
                 },
                 "data_description": {
+                    "auto_sync": "Run the label synchronization automatically once per day.",
                     "sync_time": "The labels are synchronized once per day at this time."
                 }
             }
