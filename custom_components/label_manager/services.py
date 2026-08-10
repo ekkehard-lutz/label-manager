@@ -35,3 +35,12 @@ def get_device_labels(
         return set()
 
     return set(device.labels)
+
+
+def get_device_ids(
+    hass: HomeAssistant,
+) -> set[str]:
+    """Return all device IDs currently registered in Home Assistant."""
+    device_registry = dr.async_get(hass)
+
+    return set(device_registry.devices)

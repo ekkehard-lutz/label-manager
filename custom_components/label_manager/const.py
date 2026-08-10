@@ -11,6 +11,6 @@ VERSION = "0.0.1"
 STORAGE_VERSION = 1
 STORAGE_KEY = DOMAIN
 
-PLATFORMS: list[str] = []
+PLATFORMS: list[str] = ["button"]
 
 SYNC_INTERVAL = timedelta(days=1)

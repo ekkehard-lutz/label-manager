@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
 
-from .services import get_device_entities, get_device_labels
+from .services import get_device_entities, get_device_ids, get_device_labels
 from .storage import LabelManagerStorage
 
 
@@ -126,6 +126,25 @@ async def sync_device(
             hass,
             storage,
             entity_id,
+            device_id,
+        )
+
+    await storage.async_save()
+
+    return results
+
+
+async def sync_all_devices(
+    hass: HomeAssistant,
+    storage: LabelManagerStorage,
+) -> dict[str, dict[str, LabelSyncResult]]:
+    """Synchronize inherited labels for all registered devices."""
+    results: dict[str, dict[str, LabelSyncResult]] = {}
+
+    for device_id in get_device_ids(hass):
+        results[device_id] = await sync_device(
+            hass,
+            storage,
             device_id,
         )
 

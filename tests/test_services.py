@@ -47,3 +47,29 @@ def test_get_device_entities(monkeypatch) -> None:
     }
 
 
+def test_get_device_ids(monkeypatch) -> None:
+    """Return all registered device IDs."""
+    hass = MagicMock()
+
+    device_registry = MagicMock()
+    device_registry.devices = {
+        "device_123": MagicMock(),
+        "device_456": MagicMock(),
+        "device_789": MagicMock(),
+    }
+
+    from custom_components.label_manager import services
+
+    monkeypatch.setattr(
+        services.dr,
+        "async_get",
+        lambda hass: device_registry,
+    )
+
+    result = services.get_device_ids(hass)
+
+    assert result == {
+        "device_123",
+        "device_456",
+        "device_789",
+    }

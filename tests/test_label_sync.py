@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from homeassistant.core import Event
 from homeassistant.helpers.device_registry import EVENT_DEVICE_REGISTRY_UPDATED
 
+from custom_components.label_manager import label_sync
 from custom_components.label_manager.label_sync import calculate_entity_labels
 
 
@@ -289,3 +290,58 @@ def test_device_label_replacement_is_applied() -> None:
     assert result.labels_to_remove == {
         "Beleuchtung",
     }
+
+
+@pytest.mark.asyncio
+async def test_sync_all_devices(monkeypatch) -> None:
+    """Synchronize all registered devices."""
+    hass = MagicMock()
+    storage = MagicMock()
+    storage.async_save = AsyncMock()
+
+    device_ids = {
+        "device_123",
+        "device_456",
+        "device_789",
+    }
+
+    sync_device_mock = AsyncMock(return_value={})
+
+    monkeypatch.setattr(
+        label_sync,
+        "get_device_ids",
+        lambda hass: device_ids,
+    )
+
+    monkeypatch.setattr(
+        label_sync,
+        "sync_device",
+        sync_device_mock,
+    )
+
+    result = await label_sync.sync_all_devices(
+        hass,
+        storage,
+    )
+
+    assert set(result) == device_ids
+
+    assert sync_device_mock.await_count == 3
+
+    sync_device_mock.assert_any_await(
+        hass,
+        storage,
+        "device_123",
+    )
+    sync_device_mock.assert_any_await(
+        hass,
+        storage,
+        "device_456",
+    )
+    sync_device_mock.assert_any_await(
+        hass,
+        storage,
+        "device_789",
+    )
+
+    storage.async_save.assert_awaited_once()
