@@ -6,7 +6,6 @@ from datetime import timedelta
 
 DOMAIN = "label_manager"
 NAME = "Label Manager"
-VERSION = "0.0.1"
 
 STORAGE_VERSION = 1
 STORAGE_KEY = DOMAIN
@@ -14,3 +13,5 @@ STORAGE_KEY = DOMAIN
 PLATFORMS: list[str] = ["button"]
 
 SYNC_INTERVAL = timedelta(days=1)
+CONF_SYNC_TIME = "sync_time"
+DEFAULT_SYNC_TIME = "03:00:00"

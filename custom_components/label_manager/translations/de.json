@@ -9,5 +9,19 @@
         "abort": {
             "already_configured": "Der Label Manager ist bereits eingerichtet."
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Label Manager Einstellungen",
+                "description": "Konfiguriere die tägliche Label-Synchronisation.",
+                "data": {
+                    "sync_time": "Synchronisationszeit"
+                },
+                "data_description": {
+                    "sync_time": "Die Labels werden einmal täglich zu dieser Uhrzeit synchronisiert."
+                }
+            }
+        }
     }
 }

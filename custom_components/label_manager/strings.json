@@ -6,5 +6,19 @@
                 "description": "Configure the Label Manager integration."
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Label Manager settings",
+                "description": "Configure the daily label synchronization.",
+                "data": {
+                    "sync_time": "Synchronization time"
+                },
+                "data_description": {
+                    "sync_time": "The labels are synchronized once per day at this time."
+                }
+            }
+        }
     }
 }
