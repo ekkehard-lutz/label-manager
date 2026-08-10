@@ -1,7 +1,7 @@
 {
   "domain": "label_manager",
   "name": "Label Manager",
-  "version": "0.1.0",
+  "version": "0.1.1-beta.1",
   "documentation": "https://github.com/ekkehard-lutz/label-manager",
   "issue_tracker": "https://github.com/ekkehard-lutz/label-manager/issues",
   "codeowners": [
