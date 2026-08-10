@@ -85,11 +85,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_SYNC_TIME,
                         default=current_sync_time,
-                    ): selector.TimeSelector(
-                        selector.TimeSelectorConfig(
-                            format="24",
-                        )
-                    ),
+                    ): selector.TimeSelector(),
                 }
             ),
         )

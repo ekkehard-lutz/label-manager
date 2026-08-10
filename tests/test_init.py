@@ -13,6 +13,7 @@ from custom_components.label_manager.const import (
     DEFAULT_SYNC_TIME,
     DOMAIN,
 )
+from custom_components.label_manager.config_flow import OptionsFlowHandler
 
 
 @pytest.mark.asyncio
@@ -342,3 +343,23 @@ async def test_update_options_disables_daily_sync(monkeypatch) -> None:
         hass.data[DOMAIN][entry.entry_id]["daily_sync_unsubscribe"]
         is None
     )
+
+
+@pytest.mark.asyncio
+async def test_options_flow_schema(monkeypatch) -> None:
+    """Build the options flow schema successfully."""
+    entry = MagicMock()
+    entry.options = {
+        CONF_AUTO_SYNC: True,
+        CONF_SYNC_TIME: "03:00:00",
+    }
+
+    flow = OptionsFlowHandler()
+    flow.hass = MagicMock()
+    flow._config_entry = entry
+
+    result = await flow.async_step_init()
+
+    assert result["type"] == "form"
+    assert result["step_id"] == "init"
+    assert "data_schema" in result
