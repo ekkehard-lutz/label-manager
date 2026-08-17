@@ -1,16 +1,23 @@
 # Home Assistant Label Manager
 
-A Home Assistant custom integration for managing labels and automatically
-inheriting device labels to the entities belonging to a device.
+A Home Assistant custom integration that automatically **inherits labels
+assigned to a device to all entities belonging to that device**.
+
+Label Manager has one focused purpose: keeping device labels and entity labels
+synchronized. It does not create sensors, virtual devices, statistics, or
+other derived entities.
 
 ## Status
 
-**Version: 0.1.1**
+**Version: 0.1.2**
 
-The first stable release of the Label Manager.
+Stable maintenance release.
 
-Device-to-entity label inheritance, manual synchronization, and automatic
-daily synchronization are implemented and covered by automated tests.
+The core label inheritance functionality was completed in `0.1.1`.
+Version `0.1.2` is a cleanup release that removes unused placeholder modules
+without changing the integration's behaviour.
+
+The current test suite contains **27 passing tests**.
 
 ## Features
 
@@ -39,8 +46,8 @@ Entity 2
 
 ### Automatic synchronization
 
-Changes to the labels of a device are automatically detected through the
-Home Assistant Device Registry.
+Changes to the labels of a device are detected through the Home Assistant
+Device Registry.
 
 When a label is added to a device, it is added to the device's entities.
 
@@ -49,36 +56,36 @@ removed from the entities.
 
 ### Daily consistency synchronization
 
-The integration can automatically synchronize all registered devices once
-per day.
+Label Manager can perform a complete synchronization of all devices once per
+day.
 
 The synchronization time can be configured through the integration options.
+
 The interval is fixed to once per day.
 
-Automatic synchronization can be enabled or disabled independently of the
-manual synchronization.
+Automatic synchronization can be enabled or disabled independently of manual
+synchronization.
 
-Changing the synchronization settings takes effect without requiring a
-Home Assistant restart.
+Changing the synchronization time or enabling/disabling automatic
+synchronization takes effect without requiring a Home Assistant restart.
 
 ### Manual synchronization
 
-A manual synchronization of all registered devices can be triggered at any
-time using the integration's synchronization button.
+A complete synchronization can be triggered manually at any time using the
+integration's synchronization button.
 
-Manual synchronization is independent of the automatic daily synchronization
-and is useful for testing or for immediately applying label changes.
+Manual synchronization is independent of the automatic daily synchronization.
 
 ### Multiple labels
 
-Multiple device labels are supported.
+Multiple labels assigned to a device are supported.
 
-Removing one label does not affect the other inherited labels.
+Removing one device label does not affect the other inherited labels.
 
-### Manual entity labels
+### Preservation of manually assigned entity labels
 
-Labels that are assigned directly to an entity and are not inherited from
-the device are preserved.
+Labels that are assigned directly to an entity and are not managed by Label
+Manager are preserved.
 
 For example:
 
@@ -90,7 +97,7 @@ Entity:
   Energie
 ```
 
-Results in:
+After synchronization:
 
 ```text
 Entity:
@@ -106,23 +113,11 @@ Energie
 
 ### Tracking inherited labels
 
-The integration keeps a separate record of which labels are considered
-inherited for each entity.
+Label Manager keeps track of which labels it considers inherited for each
+entity.
 
-This makes it possible to correctly handle cases where an inherited label
-is manually removed and later manually added again.
-
-For example:
-
-1. The device has the label `Beleuchtung`.
-2. The entity inherits `Beleuchtung`.
-3. `Beleuchtung` is manually removed from the entity.
-4. `Beleuchtung` is manually added to the entity again.
-5. `Beleuchtung` is removed from the device.
-6. `Beleuchtung` is also removed from the entity.
-
-The integration therefore distinguishes between the current labels of an
-entity and the labels that are managed through device inheritance.
+This allows the integration to distinguish between labels managed by the
+device inheritance mechanism and labels assigned independently to an entity.
 
 ## Installation
 
@@ -149,26 +144,24 @@ Settings → Devices & services → Add integration
 
 ### Manual installation
 
-The integration files are located in:
+Copy the following directory to your Home Assistant configuration:
 
 ```text
 custom_components/label_manager/
 ```
 
-For a manual installation, copy that directory to:
+Target location:
 
 ```text
 /config/custom_components/label_manager/
 ```
 
-Then restart Home Assistant and add **Label Manager** through the integrations
+Restart Home Assistant and add **Label Manager** through the integrations
 page.
 
 ## Configuration
 
-After adding the integration, open its configuration/options dialog.
-
-The following options are available:
+After adding the integration, open the integration's options.
 
 ### Automatic daily synchronization
 
@@ -182,11 +175,23 @@ Select the time at which the daily synchronization is performed.
 
 The interval is fixed to **once per day**.
 
-Changing the time or enabling/disabling automatic synchronization does not
-require a Home Assistant restart.
-
 The manual synchronization button remains available regardless of the
 automatic synchronization setting.
+
+## What Label Manager does not do
+
+Label Manager intentionally focuses only on label inheritance.
+
+It does **not**:
+
+- create group sensors
+- create statistics sensors
+- create virtual devices or virtual entities
+- aggregate sensor values
+- maintain a history of label changes
+- provide functionality unrelated to device-to-entity label inheritance
+
+These responsibilities belong outside this integration.
 
 ## Development
 
@@ -204,16 +209,22 @@ Run the complete test suite:
 python -m pytest -q
 ```
 
-The current test suite contains tests for:
+Current test status:
+
+```text
+27 passed
+```
+
+The test suite covers, among other things:
 
 - device label inheritance
 - multiple device labels
 - removal of inherited labels
-- preservation of manually assigned labels
+- preservation of manually assigned entity labels
 - replacement of inherited labels
 - manual modification of inherited labels
 - device registry event handling
-- device entity lookup
+- device/entity lookup
 - complete device synchronization
 - manual synchronization
 - daily synchronization scheduler
@@ -222,12 +233,6 @@ The current test suite contains tests for:
 - options update handling
 - options flow validation
 
-Current status:
-
-```text
-27 passed
-```
-
 ## Project structure
 
 ```text
@@ -235,20 +240,17 @@ label-manager/
 ├── custom_components/
 │   └── label_manager/
 │       ├── brand/
+│       │   └── icon.png
 │       ├── translations/
+│       │   ├── de.json
+│       │   └── en.json
 │       ├── __init__.py
 │       ├── button.py
 │       ├── config_flow.py
 │       ├── const.py
-│       ├── coordinator.py
-│       ├── entity.py
-│       ├── exceptions.py
 │       ├── label_sync.py
 │       ├── manifest.json
-│       ├── models.py
-│       ├── sensor.py
 │       ├── services.py
-│       ├── statistics.py
 │       ├── storage.py
 │       └── strings.json
 ├── tests/
@@ -263,49 +265,6 @@ label-manager/
 ├── pyproject.toml
 └── requirements-dev.txt
 ```
-
-## Roadmap
-
-### 0.0.x – Foundation
-
-- Home Assistant integration
-- Config Flow
-- Basic persistent storage
-- Technical foundation for label synchronization
-
-### 0.1.x – Label Inheritance
-
-- Inherit device labels to all entities belonging to the device
-- Support multiple device labels
-- Automatically synchronize label changes
-- Remove inherited labels when they are removed from the device
-- Distinguish inherited labels from entity-only labels
-- Manual full synchronization
-- Configurable daily consistency synchronization
-- Enable or disable automatic synchronization
-- Configurable synchronization time
-
-### 0.2.x – Group Sensors
-
-- Automatic creation and management of group sensors based on labels
-- Configuration of group sensor behaviour
-
-### 0.3.x – Statistics
-
-- Statistics based on labels and grouped entities
-- Additional statistics-related sensors and information
-
-### 0.4.x – History
-
-- History of label changes
-- History of synchronization activities
-- Improved visibility into label inheritance
-
-### 1.0.0 – Extended Stable Release
-
-- Extended documentation
-- Further features based on practical usage
-- Stable long-term configuration and synchronization behaviour
 
 ## License
 
